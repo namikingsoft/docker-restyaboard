@@ -1,0 +1,6 @@
+.vagrant
+.bundle
+.env
+vendor/bundle
+Gemfile.lock
+ssh-config
