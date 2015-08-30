@@ -14,18 +14,19 @@ $ cp .env.sample .env
 $ vim .env
 $ vagrant plugin install vagrant-aws
 $ vagrant plugin install dotenv
-$ vagrant up
+$ vagrant up && bundle exec rake
 ```
 
-Provisioning
+Rake
 ------------------------------
+
+### Provisioning
 
 ```bash
 $ bundle exec rake provision
 ```
 
-Spec
-------------------------------
+### ServerSpec 
 
 ```bash
 $ bundle exec rake spec
