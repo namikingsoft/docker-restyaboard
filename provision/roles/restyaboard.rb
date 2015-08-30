@@ -12,7 +12,7 @@ git "/home/ec2-user/docker-restyaboard"  do
 end
 
 execute "docker up" do
-  command "COMPOSE_API_VERSION=1.18 docker-compose build"
+  command "COMPOSE_API_VERSION=1.18 /usr/local/bin/docker-compose up -d"
   cwd "/home/ec2-user/docker-restyaboard"
   user "ec2-user"
   not_if "docker ps | grep restyaboard"

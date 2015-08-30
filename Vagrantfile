@@ -11,9 +11,9 @@ VAGRANTFILE_API_VERSION = "2"
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
-  config.vm.define :docker, primary: true do |docker|
-    docker.vm.provider :aws do |provider, override|
-      override.vm.hostname          = "docker"
+  config.vm.define :restyaboard, primary: true do |restyaboard|
+    restyaboard.vm.provider :aws do |provider, override|
+      override.vm.hostname          = "restyaboard"
       override.vm.box_url           = "https://github.com/mitchellh/vagrant-aws/raw/master/dummy.box"
       override.vm.box               = "aws"
       override.ssh.username         = ENV['AWS_SSH_USERNAME']
@@ -30,7 +30,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       provider.instance_ready_timeout = 120
       provider.terminate_on_shutdown  = false
       provider.security_groups      = [ENV['AWS_SECURITY_GROUP']]
-      provider.tags                 = {"Name" => "docker"}
+      provider.tags                 = {"Name" => "restyaboard"}
 
       # synced folder
       override.vm.synced_folder ".", "/vagrant", disabled: true

@@ -1,4 +1,4 @@
 ---
 recipes:
   - roles/base.rb
-  - roles/docker.rb
+  - roles/restyaboard.rb
