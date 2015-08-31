@@ -13,10 +13,10 @@ Build and Run using docker-compose
 ------------------------------
 
 ``` bash
-$ git clone https://github.com/namikingsoft/docker-restyaboard.git
-$ cd docker-restyaboard
+git clone https://github.com/namikingsoft/docker-restyaboard.git
+cd docker-restyaboard
 
-$ COMPOSE_API_VERSION=1.18 docker-compose up -d
+COMPOSE_API_VERSION=1.18 docker-compose up -d
 ```
 
 
@@ -24,18 +24,18 @@ Include provisioning in AWS EC2
 ------------------------------
 
 ```bash
-$ git clone https://github.com/namikingsoft/docker-restyaboard.git
-$ cd docker-restyaboard
+git clone https://github.com/namikingsoft/docker-restyaboard.git
+cd docker-restyaboard
 
-$ bundle install
+bundle install
 
-$ cp .env.sample .env
-$ vim .env
+cp .env.sample .env
+vim .env
 
-$ vagrant plugin install vagrant-aws
-$ vagrant plugin install dotenv
+vagrant plugin install vagrant-aws
+vagrant plugin install dotenv
 
-$ vagrant up && bundle exec rake
+vagrant up && bundle exec rake
 ```
 
 
@@ -53,11 +53,11 @@ Other Command
 #### Rake provisioning
 
 ```bash
-$ bundle exec rake provision
+bundle exec rake provision
 ```
 
 #### Rake serverspec 
 
 ```bash
-$ bundle exec rake spec
+bundle exec rake spec
 ```
