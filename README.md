@@ -68,5 +68,5 @@ bundle exec rake spec
 License
 ------------------------------
 
-* [OSL 3.0](LICENSE.txt)  
+[OSL 3.0](LICENSE.txt)  
 It fits in Restyaboard.
