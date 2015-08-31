@@ -5,15 +5,14 @@ Build Restyaboard using Docker.
 
 * Restyaboard  
   http://restya.com/board/
+* Docker  
+  https://www.docker.com/
 
 
 Build and Run using docker-compose
 ------------------------------
 
 ``` bash
-$ sudo yum install docker
-$ sudo pip install -U docker-compose
-
 $ git clone https://github.com/namikingsoft/docker-restyaboard.git
 $ cd docker-restyaboard
 
