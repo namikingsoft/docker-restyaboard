@@ -1,19 +1,18 @@
 include_recipe "../cookbooks/docker/default.rb"
 
-execute "add group docker for ec2-user" do
-  command "gpasswd -a ec2-user docker"
-  not_if "id ec2-user | grep docker"
+directory "/dockerfile"
+directory "/dockerfile/restyaboard"
+remote_directory "/dockerfile/restyaboard" do
+  action :create
+  source "../../restyaboard"
 end
 
-git "/home/ec2-user/docker-restyaboard"  do
-  repository "https://github.com/namikingsoft/docker-restyaboard.git"
-  user "ec2-user"
-  not_if "test -d /home/ec2-user/docker-restyaboard"
+remote_file  "/dockerfile/docker-compose.yml" do 
+  source "../../docker-compose.yml"
 end
 
 execute "docker up" do
-  command "COMPOSE_API_VERSION=1.18 /usr/local/bin/docker-compose up -d"
-  cwd "/home/ec2-user/docker-restyaboard"
-  user "ec2-user"
+  command "COMPOSE_API_VERSION=1.18 docker-compose up -d"
+  cwd "/dockerfile"
   not_if "docker ps | grep restyaboard"
 end

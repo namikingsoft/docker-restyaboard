@@ -7,6 +7,11 @@ execute "install docker-compose" do
   not_if "test -e /usr/local/bin/docker-compose"
 end
 
+link "/usr/bin/docker-compose" do 
+  to "/usr/local/bin/docker-compose"
+  not_if "test -e /usr/bin/docker-compose"
+end
+
 service "docker" do
   action [:enable, :start]
 end
