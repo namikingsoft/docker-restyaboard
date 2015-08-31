@@ -3,11 +3,11 @@ Docker Restyaboard
 
 Build Restyaboard using Docker.
 
-* Restyaboard
+* Restyaboard  
   http://restya.com/board/
 
 
-Build and Run Docker using docker-compose
+Build and Run using docker-compose
 ------------------------------
 
 ``` bash
@@ -37,19 +37,21 @@ $ vagrant up && bundle exec rake
 Check URL
 ------------------------------
 
+```
 http://(SERVER_IP):1234
+```
 
 
 Other Command
 ------------------------------
 
-### Rake provisioning
+#### Rake provisioning
 
 ```bash
 $ bundle exec rake provision
 ```
 
-### Rake serverspec 
+#### Rake serverspec 
 
 ```bash
 $ bundle exec rake spec
