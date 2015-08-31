@@ -1,16 +1,19 @@
 Docker Restyaboard
 ==============================
 
-Build Restyaboard using Docker.
+Build Restyaboard in Docker.
 
 * Restyaboard  
   http://restya.com/board/
+
 * Docker  
   https://www.docker.com/
 
 
-Build and Run using docker-compose
+Quick Start
 ------------------------------
+
+Build image and Run container using docker-compose.
 
 ``` bash
 git clone https://github.com/namikingsoft/docker-restyaboard.git
@@ -61,3 +64,9 @@ bundle exec rake provision
 ```bash
 bundle exec rake spec
 ```
+
+License
+------------------------------
+
+* [OSL 3.0](LICENSE.txt)  
+It fits in Restyaboard.
