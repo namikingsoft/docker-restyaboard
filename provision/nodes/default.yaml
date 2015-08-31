@@ -1,4 +1,0 @@
----
-recipes:
-  - roles/base.rb
-  - roles/restyaboard.rb
