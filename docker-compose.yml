@@ -1,14 +1,14 @@
-data00restyaboard:
+data:
   image: busybox
   volumes:
-    - /volumes/data00elasticsearch:/usr/share/elasticsearch/data
-    - /volumes/data00postgres:/var/lib/postgresql/data
-    - /volumes/data00restyaboard:/usr/share/nginx/html/media
+    - /usr/share/elasticsearch/data
+    - /var/lib/postgresql/data
+    - /usr/share/nginx/html/media
 
 elasticsearch:
   image: elasticsearch
   volumes_from:
-    - data00restyaboard
+    - data
   restart: always
 
 postgres:
@@ -17,7 +17,7 @@ postgres:
     POSTGRES_USER: postgres
     POSTGRES_PASSWORD: something
   volumes_from:
-    - data00restyaboard
+    - data
   restart: always
 
 restyaboard:
@@ -28,5 +28,5 @@ restyaboard:
   ports:
     - 1234:80
   volumes_from:
-    - data00restyaboard
+    - data
   restart: always
