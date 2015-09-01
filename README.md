@@ -19,7 +19,7 @@ Build image and Run container using docker-compose.
 git clone https://github.com/namikingsoft/docker-restyaboard.git
 cd docker-restyaboard
 
-COMPOSE_API_VERSION=1.18 docker-compose up -d
+docker-compose up -d
 ```
 
 
@@ -28,6 +28,12 @@ Check URL
 
 ```
 http://(ServerIP):1234
+
+Username: admin
+Password: restya
+
+Username: user
+Password: restya
 ```
 
 
