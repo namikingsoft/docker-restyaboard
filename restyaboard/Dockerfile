@@ -15,6 +15,9 @@ RUN rpm -ivh http://rpms.famillecollet.com/enterprise/remi-release-7.rpm
 COPY etc/yum.repos.d/nginx.repo /etc/yum.repos.d/
 RUN yum install -y --enablerepo=nginx nginx
 
+# install postfix
+RUN yum install -y postfix
+
 # install php6.6
 RUN yum install -y --enablerepo=remi-php56\
  php php-fpm php-pgsql php-mbstring php-pecl-imagick

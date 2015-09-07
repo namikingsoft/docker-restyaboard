@@ -35,6 +35,7 @@ if [ "$1" = 'start' ]; then
   crond
   php-fpm
   nginx
+  postfix start
 
   # tail log
   exec tail -f /var/log/nginx/access.log /var/log/nginx/error.log
