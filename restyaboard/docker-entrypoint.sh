@@ -4,6 +4,8 @@ set -e
 
 if [ "$1" = 'start' ]; then
   # config
+  sed -i "s/^.*'R_DB_NAME'.*$/define('R_DB_NAME', 'restyaboard');/g" \
+    /usr/share/nginx/html/server/php/R/config.inc.php
   sed -i "s/^.*'R_DB_USER'.*$/define('R_DB_USER', 'restya');/g" \
     /usr/share/nginx/html/server/php/R/config.inc.php
   sed -i "s/^.*'R_DB_PASSWORD'.*$/define('R_DB_PASSWORD', '${POSTGRES_ENV_POSTGRES_PASSWORD}');/g" \

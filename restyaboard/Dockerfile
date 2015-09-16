@@ -36,7 +36,7 @@ WORKDIR /usr/share/nginx/html
 RUN cp restyaboard.conf /etc/nginx/conf.d
 RUN cp -R media /tmp
 RUN npm install
-RUN grunt build
+RUN grunt build:live
 RUN echo '*/5 * * * * php /usr/share/nginx/htmlserver/php/R/shell/cron.php'\
  > /var/spool/cron/root
 
