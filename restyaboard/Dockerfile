@@ -18,11 +18,11 @@ RUN yum install -y --enablerepo=nginx nginx
 # install postfix
 RUN yum install -y postfix
 
-# install php6.6
+# install php5.6
 RUN yum install -y --enablerepo=remi-php56\
  php php-fpm php-pgsql php-mbstring php-pecl-imagick
-RUN sed -i 's/^user = apache$/user = nginx/g' /etc/yum.repos.d/epel.repo
-RUN sed -i 's/^group = apache$/group = nginx/g' /etc/yum.repos.d/epel.repo
+RUN sed -i 's/^user = apache$/user = nginx/g' /etc/php-fpm.d/www.conf
+RUN sed -i 's/^group = apache$/group = nginx/g' /etc/php-fpm.d/www.conf
 
 # install node.js
 RUN yum install -y --enablerepo=epel nodejs npm
