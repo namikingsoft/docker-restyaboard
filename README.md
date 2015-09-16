@@ -22,6 +22,8 @@ cd docker-restyaboard
 docker-compose up -d
 ```
 
+Please wait a few minutes to complete initialize.
+
 
 Check URL
 ------------------------------
@@ -37,8 +39,22 @@ Password: restya
 ```
 
 
+Change Restyaboard Version
+------------------------------
+
+Edit docker-compose.yml.
+https://github.com/RestyaPlatform/board/releases
+
+```yaml
+environment:
+    RESTYABOARD_VERSION: vX.Y.Z
+```
+
+### Notice
+If you want to install a higher than source version, it may not work, perhaps.
+
+
 License
 ------------------------------
 
-[OSL 3.0](LICENSE.txt)
-It fits in Restyaboard.
+[OSL 3.0](LICENSE.txt) fits in Restyaboard.
