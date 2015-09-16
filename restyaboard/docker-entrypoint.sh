@@ -26,6 +26,14 @@ if [ "$1" = 'start' ]; then
   export PGUSER=$POSTGRES_ENV_POSTGRES_USER
   export PGPASSWORD=$POSTGRES_ENV_POSTGRES_PASSWORD
   set +e
+  while :
+  do
+    psql -c "\q"
+    if [ "$?" = 0 ]; then
+      break
+    fi
+    sleep 1
+  done
   psql -c "CREATE USER restya WITH ENCRYPTED PASSWORD '${PGPASSWORD}'"
   psql -c "CREATE DATABASE restyaboard OWNER restya ENCODING 'UTF8'"
   if [ "$?" = 0 ]; then
