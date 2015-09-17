@@ -34,3 +34,6 @@ VOLUME /usr/share/nginx/html/media
 COPY docker-entrypoint.sh /
 ENTRYPOINT ["/docker-entrypoint.sh"]
 CMD ["start"]
+
+# expose port
+EXPOSE 80

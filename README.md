@@ -47,11 +47,11 @@ See https://github.com/RestyaPlatform/board/releases
 
 ```yaml
 environment:
-    RESTYABOARD_VERSION: vX.Y.Z
+    RESTYABOARD_VERSION: REPLACE_ME
 ```
 
-### Notice
-If you want to install a higher than source version, it may not work, perhaps.
+* Notice  
+If you install a higher than source version, it may not work, perhaps.
 
 
 License
