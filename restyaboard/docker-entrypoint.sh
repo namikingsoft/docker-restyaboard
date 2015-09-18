@@ -3,7 +3,7 @@
 set -e
 
 if [ "$1" = 'start' ]; then
-  # delopy
+  # deploy
   if [ ! -e /usr/share/nginx/html/restyaboard.conf ]; then
     cd /tmp
     curl -L -o restyaboard.tar.gz https://github.com/RestyaPlatform/board/archive/${RESTYABOARD_VERSION}.tar.gz
