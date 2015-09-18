@@ -3,16 +3,17 @@
 set -e
 
 if [ "$1" = 'start' ]; then
-  # provision
-  cd /tmp
-  curl -L -o restyaboard.tar.gz https://github.com/RestyaPlatform/board/archive/${RESTYABOARD_VERSION}.tar.gz
-  mkdir html && tar xzvf restyaboard.tar.gz -C html --strip-components 1
-  cp -rf html /usr/share/nginx/
-  cd /usr/share/nginx/html
-  cp restyaboard.conf /etc/nginx/conf.d
-  npm install
-  grunt build:live
-  echo '*/5 * * * * php /usr/share/nginx/htmlserver/php/R/shell/cron.php' > /var/spool/cron/root
+  # delopy
+  if [ ! -e /usr/share/nginx/html/restyaboard.conf ]; then
+    cd /tmp
+    curl -L -o restyaboard.tar.gz https://github.com/RestyaPlatform/board/archive/${RESTYABOARD_VERSION}.tar.gz
+    mkdir html && tar xzvf restyaboard.tar.gz -C html --strip-components 1
+    cp -rf html /usr/share/nginx/
+    cd /usr/share/nginx/html
+    cp restyaboard.conf /etc/nginx/conf.d
+    npm install
+    grunt build:live
+  fi
 
   # config
   sed -i "s/^.*'R_DB_NAME'.*$/define('R_DB_NAME', 'restyaboard');/g" \
@@ -25,8 +26,9 @@ if [ "$1" = 'start' ]; then
     /usr/share/nginx/html/server/php/R/config.inc.php
   sed -i "s/^.*'R_DB_PORT'.*$/define('R_DB_PORT', '${POSTGRES_PORT_5432_TCP_PORT}');/g" \
     /usr/share/nginx/html/server/php/R/config.inc.php
+  echo '*/5 * * * * php /usr/share/nginx/htmlserver/php/R/shell/cron.php' > /var/spool/cron/root
  
-  # media 
+  # media
   chmod -R go+w /usr/share/nginx/html/media
   chmod -R go+w /usr/share/nginx/html/client/img
 
