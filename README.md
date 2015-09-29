@@ -49,8 +49,7 @@ Available version is https://github.com/RestyaPlatform/board/releases
 ENV restyaboard_version=REPLACE_ME
 ```
 
-* Notice  
-If you install a higher version than Dockerfile version, it may not work, perhaps.
+But if you install a higher version than Dockerfile version, it may not work, perhaps.
 
 
 License
