@@ -42,16 +42,15 @@ Password: restya
 Change Restyaboard Version
 ------------------------------
 
-Edit docker-compose.yml.  
-See https://github.com/RestyaPlatform/board/releases
+Edit restyaboard/Dockerfile.  
+Available version is https://github.com/RestyaPlatform/board/releases
 
-```yaml
-environment:
-    RESTYABOARD_VERSION: REPLACE_ME
+```
+ENV restyaboard_version=REPLACE_ME
 ```
 
 * Notice  
-If you install a higher than source version, it may not work, perhaps.
+If you install a higher version than Dockerfile version, it may not work, perhaps.
 
 
 License

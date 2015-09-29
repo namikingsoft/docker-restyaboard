@@ -27,8 +27,6 @@ restyaboard:
     - postgres:postgres
   ports:
     - 1234:80
-  environment:
-    RESTYABOARD_VERSION: v0.1.2
   volumes_from:
     - data
   restart: always
