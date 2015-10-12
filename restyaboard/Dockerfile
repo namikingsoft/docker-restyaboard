@@ -1,45 +1,44 @@
-FROM centos:7
+FROM debian:wheezy-backports
 
 # restyaboard version
 ENV restyaboard_version=v0.1.2
 
-# add repository
-RUN \
- rpm --import http://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-7 &&\
- rpm -ivh http://ftp-srv2.kddilabs.jp/Linux/packages/fedora/epel/7/x86_64/e/epel-release-7-5.noarch.rpm &&\
- sed -i 's/^enabled=1$/enabled=0/g' /etc/yum.repos.d/epel.repo &&\
- rpm --import http://rpms.famillecollet.com/RPM-GPG-KEY-remi &&\
- rpm -ivh http://rpms.famillecollet.com/enterprise/remi-release-7.rpm
-COPY etc/yum.repos.d/nginx.repo /etc/yum.repos.d/
-
 # update & install package
 RUN \
- yum update -y &&\
- yum install -y bzip2 cronie postfix postgresql &&\
- yum install -y --enablerepo=nginx nginx &&\
- yum install -y --enablerepo=remi-php56\
-  php php-fpm php-pgsql php-mbstring php-pecl-imagick &&\
- yum install -y --enablerepo=epel nodejs npm
-RUN npm install -g grunt-cli
-
-# setting php-fpm
-RUN \
- sed -i 's/^user = apache$/user = nginx/g' /etc/php-fpm.d/www.conf &&\
- sed -i 's/^group = apache$/group = nginx/g' /etc/php-fpm.d/www.conf
-
-# initial document root
-RUN rm -rf /usr/share/nginx/html && mkdir /usr/share/nginx/html
+ apt-get update -y &&\
+ apt-get install -y bzip2 curl cron postgresql nginx &&\
+ apt-get install -y php5 php5-fpm php5-curl php5-pgsql php5-imagick libapache2-mod-php5 &&\
+ apt-get install -y nodejs nodejs-legacy &&\
+ curl -L https://npmjs.org/install.sh | sh &&\
+ npm install -g grunt-cli &&\
+ echo "postfix postfix/mailname string example.com"\
+ | debconf-set-selections &&\
+ echo "postfix postfix/main_mailer_type string 'Internet Site'"\
+ | debconf-set-selections &&\
+ apt-get install -y postfix
 
 # deploy app
+RUN mkdir /usr/share/nginx/html
 WORKDIR /usr/share/nginx/html
 RUN \
- curl -L -o /tmp/restyaboard.tar.gz https://github.com/RestyaPlatform/board/archive/${restyaboard_version}.tar.gz &&\
+ curl -L -o /tmp/restyaboard.tar.gz \
+  https://github.com/RestyaPlatform/board/archive/${restyaboard_version}.tar.gz &&\
  tar xzvf /tmp/restyaboard.tar.gz --strip-components 1 &&\
  rm /tmp/restyaboard.tar.gz &&\
  cp -R media /tmp/ &&\
  cp restyaboard.conf /etc/nginx/conf.d &&\
  npm install &&\
- grunt build:live
+ grunt build:live &&\
+ rm -rf node_modules
+
+# setting php-fpm
+RUN \
+ sed -i 's/^.*listen.mode = 0660$/listen.mode = 0660/'\
+  /etc/php5/fpm/pool.d/www.conf &&\
+ sed -i 's|^.*fastcgi_pass.*$|fastcgi_pass unix:/var/run/php5-fpm.sock;|'\
+  /etc/nginx/conf.d/restyaboard.conf &&\
+ sed -i -e "/fastcgi_pass/a fastcgi_param HTTPS 'off';"\
+  /etc/nginx/conf.d/restyaboard.conf
 
 # volume
 VOLUME /usr/share/nginx/html/media

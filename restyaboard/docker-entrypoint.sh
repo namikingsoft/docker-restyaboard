@@ -43,10 +43,10 @@ if [ "$1" = 'start' ]; then
   set -e
 
   # service start
-  crond
-  php-fpm
-  nginx
-  postfix start
+  service cron start
+  service php5-fpm start
+  service nginx start
+  service postfix start
 
   # tail log
   exec tail -f /var/log/nginx/access.log /var/log/nginx/error.log
