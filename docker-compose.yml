@@ -4,6 +4,8 @@ data:
     - /usr/share/elasticsearch/data
     - /var/lib/postgresql/data
     - /usr/share/nginx/html/media
+  command: tail -f /dev/null
+  restart: always
 
 elasticsearch:
   image: elasticsearch
