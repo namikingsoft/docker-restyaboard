@@ -1,7 +1,7 @@
 FROM debian:wheezy-backports
 
 # restyaboard version
-ENV restyaboard_version=v0.1.3
+ENV restyaboard_version=v0.1.4
 
 # update & install package
 RUN \
