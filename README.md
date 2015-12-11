@@ -66,8 +66,10 @@ export PGHOST=$POSTGRES_PORT_5432_TCP_ADDR
 export PGPORT=$POSTGRES_PORT_5432_TCP_PORT
 export PGUSER=$POSTGRES_ENV_POSTGRES_USER
 export PGPASSWORD=$POSTGRES_ENV_POSTGRES_PASSWORD
+...
 psql -d restyaboard -f sql/upgrade-0.1.3-0.1.4.sql
 psql -d restyaboard -f sql/upgrade-0.1.4-0.1.5.sql
+...
 exit
 ```
 
