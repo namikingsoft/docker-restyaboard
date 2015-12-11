@@ -52,6 +52,29 @@ ENV restyaboard_version=REPLACE_ME
 But if you install a higher version than Dockerfile version, it may not work, perhaps.
 
 
+In case of upgrade version, rebuild image and recreate container.
+
+```sh
+docker-compose build
+docker-compose up -d
+```
+
+If you want to upgrade database, e.g.
+(recommend to backup database before upgrade)
+
+```sh
+docker-compose run --rm restyaboard bash
+
+export PGHOST=$POSTGRES_PORT_5432_TCP_ADDR
+export PGPORT=$POSTGRES_PORT_5432_TCP_PORT
+export PGUSER=$POSTGRES_ENV_POSTGRES_USER
+export PGPASSWORD=$POSTGRES_ENV_POSTGRES_PASSWORD
+psql -d restyaboard -f sql/upgrade-0.1.3-0.1.4.sql
+psql -d restyaboard -f sql/upgrade-0.1.4-0.1.5.sql
+exit
+```
+
+
 License
 ------------------------------
 
