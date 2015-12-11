@@ -49,9 +49,6 @@ Available version is https://github.com/RestyaPlatform/board/releases
 ENV restyaboard_version=REPLACE_ME
 ```
 
-But if you install a higher version than Dockerfile version, it may not work, perhaps.
-
-
 In case of upgrade version, rebuild image and recreate container.
 
 ```sh
