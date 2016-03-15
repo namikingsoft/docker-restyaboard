@@ -6,7 +6,7 @@ if [ "$1" = 'start' ]; then
   # config
   sed -i "s/^.*'R_DB_NAME'.*$/define('R_DB_NAME', 'restyaboard');/g" \
     /usr/share/nginx/html/server/php/config.inc.php
-  sed -i "s/^.*'R_DB_USER'.*$/define('R_DB_USER', 'restya');/g" \
+  sed -i "s/^.*'R_DB_USER'.*$/define('R_DB_USER', '${POSTGRES_ENV_POSTGRES_USER}');/g" \
     /usr/share/nginx/html/server/php/config.inc.php
   sed -i "s/^.*'R_DB_PASSWORD'.*$/define('R_DB_PASSWORD', '${POSTGRES_ENV_POSTGRES_PASSWORD}');/g" \
     /usr/share/nginx/html/server/php/config.inc.php
@@ -43,8 +43,7 @@ if [ "$1" = 'start' ]; then
     fi
     sleep 1
   done
-  psql -c "CREATE USER restya WITH ENCRYPTED PASSWORD '${PGPASSWORD}'"
-  psql -c "CREATE DATABASE restyaboard OWNER restya ENCODING 'UTF8'"
+  psql -c "CREATE DATABASE restyaboard ENCODING 'UTF8'"
   if [ "$?" = 0 ]; then
     psql -d restyaboard -f /usr/share/nginx/html/sql/restyaboard_with_empty_data.sql
   fi
