@@ -5,16 +5,24 @@ set -e
 if [ "$1" = 'start' ]; then
   # config
   sed -i "s/^.*'R_DB_NAME'.*$/define('R_DB_NAME', 'restyaboard');/g" \
-    /usr/share/nginx/html/server/php/R/config.inc.php
+    /usr/share/nginx/html/server/php/config.inc.php
   sed -i "s/^.*'R_DB_USER'.*$/define('R_DB_USER', 'restya');/g" \
-    /usr/share/nginx/html/server/php/R/config.inc.php
+    /usr/share/nginx/html/server/php/config.inc.php
   sed -i "s/^.*'R_DB_PASSWORD'.*$/define('R_DB_PASSWORD', '${POSTGRES_ENV_POSTGRES_PASSWORD}');/g" \
-    /usr/share/nginx/html/server/php/R/config.inc.php
+    /usr/share/nginx/html/server/php/config.inc.php
   sed -i "s/^.*'R_DB_HOST'.*$/define('R_DB_HOST', '${POSTGRES_PORT_5432_TCP_ADDR}');/g" \
-    /usr/share/nginx/html/server/php/R/config.inc.php
+    /usr/share/nginx/html/server/php/config.inc.php
   sed -i "s/^.*'R_DB_PORT'.*$/define('R_DB_PORT', '${POSTGRES_PORT_5432_TCP_PORT}');/g" \
-    /usr/share/nginx/html/server/php/R/config.inc.php
-  echo '*/5 * * * * php /usr/share/nginx/htmlserver/php/R/shell/cron.php' > /var/spool/cron/root
+    /usr/share/nginx/html/server/php/config.inc.php
+
+  # cron shell
+  chmod +x /usr/share/nginx/html/server/php/shell/*.sh
+  echo '*/5 * * * * php /usr/share/nginx/htmlserver/php/shell/indexing_to_elasticsearch.sh' > /var/spool/cron/root
+  echo '*/5 * * * * php /usr/share/nginx/htmlserver/php/shell/instant_email_notification.sh' > /var/spool/cron/root
+  echo '0 * * * * php /usr/share/nginx/htmlserver/php/shell/periodic_email_notification.sh' > /var/spool/cron/root
+  echo '*/5 * * * * php /usr/share/nginx/htmlserver/php/shell/webhook.sh' > /var/spool/cron/root
+  echo '*/5 * * * * php /usr/share/nginx/htmlserver/php/shell/card_due_notification.sh' > /var/spool/cron/root
+  echo '*/5 * * * * php /usr/share/nginx/htmlserver/php/shell/imap.sh' > /var/spool/cron/root
  
   # media
   cp -R /tmp/media /usr/share/nginx/html/
