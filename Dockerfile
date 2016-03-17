@@ -1,7 +1,10 @@
 FROM debian:wheezy-backports
 
+ARG TERM=linux
+ARG DEBIAN_FRONTEND=noninteractive
+
 # restyaboard version
-ENV restyaboard_version=v0.2
+ENV restyaboard_version=v0.2.1
 
 # update & install package
 RUN apt-get update --yes
