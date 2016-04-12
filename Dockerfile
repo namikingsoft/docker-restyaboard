@@ -9,7 +9,7 @@ ENV restyaboard_version=v0.2.1
 # update & install package
 RUN apt-get update --yes
 RUN apt-get install --yes zip curl cron postgresql nginx
-RUN apt-get install --yes php5 php5-fpm php5-curl php5-pgsql php5-imagick libapache2-mod-php5
+RUN apt-get install --yes php5 php5-fpm php5-ldap php5-curl php5-pgsql php5-imagick libapache2-mod-php5
 RUN echo "postfix postfix/mailname string example.com" | debconf-set-selections \
         && echo "postfix postfix/main_mailer_type string 'Internet Site'" | debconf-set-selections \
         && apt-get install -y postfix
