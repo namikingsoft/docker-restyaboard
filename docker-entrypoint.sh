@@ -17,12 +17,12 @@ if [ "$1" = 'start' ]; then
 
   # cron shell
   chmod +x /usr/share/nginx/html/server/php/shell/*.sh
-  echo '*/5 * * * * php /usr/share/nginx/htmlserver/php/shell/indexing_to_elasticsearch.sh' > /var/spool/cron/root
-  echo '*/5 * * * * php /usr/share/nginx/htmlserver/php/shell/instant_email_notification.sh' > /var/spool/cron/root
-  echo '0 * * * * php /usr/share/nginx/htmlserver/php/shell/periodic_email_notification.sh' > /var/spool/cron/root
-  echo '*/5 * * * * php /usr/share/nginx/htmlserver/php/shell/webhook.sh' > /var/spool/cron/root
-  echo '*/5 * * * * php /usr/share/nginx/htmlserver/php/shell/card_due_notification.sh' > /var/spool/cron/root
-  echo '*/5 * * * * php /usr/share/nginx/htmlserver/php/shell/imap.sh' > /var/spool/cron/root
+  echo '*/5 * * * * php /usr/share/nginx/html/server/php/shell/indexing_to_elasticsearch.sh' > /var/spool/cron/root
+  echo '*/5 * * * * php /usr/share/nginx/html/server/php/shell/instant_email_notification.sh' > /var/spool/cron/root
+  echo '0 * * * * php /usr/share/nginx/html/server/php/shell/periodic_email_notification.sh' > /var/spool/cron/root
+  echo '*/5 * * * * php /usr/share/nginx/html/server/php/shell/webhook.sh' > /var/spool/cron/root
+  echo '*/5 * * * * php /usr/share/nginx/html/server/php/shell/card_due_notification.sh' > /var/spool/cron/root
+  echo '*/5 * * * * php /usr/share/nginx/html/server/php/shell/imap.sh' > /var/spool/cron/root
  
   # media
   cp -R /tmp/media /usr/share/nginx/html/
