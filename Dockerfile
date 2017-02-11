@@ -27,6 +27,15 @@ RUN cp -R media /tmp/ \
         && sed -i 's|^.*fastcgi_pass.*$|fastcgi_pass unix:/var/run/php5-fpm.sock;|' /etc/nginx/conf.d/restyaboard.conf \
         && sed -i -e "/fastcgi_pass/a fastcgi_param HTTPS 'off';" /etc/nginx/conf.d/restyaboard.conf
 
+# patch r.php for github issue #2
+RUN \
+ sed -i -e "s|^\(\$_server_domain_url =.*\)\$_SERVER\['HTTP_HOST'\]|\1'127.0.0.1'|"\
+  /usr/share/nginx/html/server/php/R/r.php
+# another solution @todo couldn't access activation url (regist mail)
+#RUN \
+# sed -i -e "/fastcgi_pass/a fastcgi_param HTTP_HOST '127.0.0.1';"\
+#  /etc/nginx/conf.d/restyaboard.conf
+
 # volume
 VOLUME /usr/share/nginx/html/media
 
