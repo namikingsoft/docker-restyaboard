@@ -4,7 +4,6 @@ services:
 
   restyaboard:
     build: .
-    image: restyaboard:4.0.2
     ports:
       - 1234:80
     volumes:
@@ -14,6 +13,11 @@ services:
       - POSTGRES_USER=admin
       - POSTGRES_PASSWORD=admin
       - POSTGRES_DB=restyaboard
+      - SMTP_DOMAIN=domain
+      - SMTP_USERNAME=user
+      - SMTP_PASSWORD=pass
+      - SMTP_SERVER=server
+      - SMTP_PORT=465
     depends_on:
       - postgres
     networks:
@@ -23,7 +27,7 @@ services:
   postgres:
     image: postgres:9.6
     ports:
-      - "5432:5432"
+      - 5432:5432
     environment:
       - POSTGRES_HOST=postgres
       - POSTGRES_USER=admin

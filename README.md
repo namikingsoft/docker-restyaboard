@@ -9,7 +9,7 @@ docker-compose.yml
 version: '2'
 services:
   restyaboard:
-    image: cangeli/restyaboard:4.0.2
+    image: cangeli/docker-restyaboard:0.4.2
     ports:
       - 1234:80
     volumes:
@@ -25,7 +25,7 @@ services:
   postgres:
     image: postgres:9.6
     ports:
-      - "5432:5432"
+      - 5432:5432
     environment:
       - POSTGRES_HOST=postgres
       - POSTGRES_USER=admin
