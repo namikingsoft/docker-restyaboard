@@ -1,17 +1,55 @@
 Docker Restyaboard
-==============================
+===================
 
-Build Restyaboard in Docker.
+Trello like kanban board. http://restya.com/board/
 
-* Restyaboard  
-  http://restya.com/board/
+docker-compose.yml
+------------------
+```
+version: '2'
+services:
+  restyaboard:
+    image: cangeli/restyaboard:4.0.2
+    ports:
+      - 1234:80
+    volumes:
+       - /var/opt/restya/media:/usr/share/nginx/html/media
+    environment:
+      - POSTGRES_HOST=postgres
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_DB=restyaboard
+    depends_on:
+      - postgres
+    restart: always
+  postgres:
+    image: postgres:9.6
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_HOST=postgres
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_DB=restyaboard
+    restart: always
+```
 
-* Docker  
-  https://www.docker.com/
+
+Default users
+-------------
+```
+http://(ServerIP):1234
+
+Username: admin
+Password: restya
+
+Username: user
+Password: restya
+```
 
 
-Quick Start
-------------------------------
+Build from github
+-----------------
 
 Build image and Run containers using docker-compose.
 
@@ -34,22 +72,8 @@ docker-compose up -d
 Please wait a few minutes to complete initialize.
 
 
-Check URL
-------------------------------
-
-```
-http://(ServerIP):1234
-
-Username: admin
-Password: restya
-
-Username: user
-Password: restya
-```
-
-
 Change Restyaboard Version
-------------------------------
+--------------------------
 
 Edit Dockerfile.
 Available version on https://github.com/RestyaPlatform/board/releases
