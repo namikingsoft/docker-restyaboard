@@ -1,2 +1,0 @@
-#!/bin/sh
-exec /usr/bin/php-fpm -R --nodaemonize --force-stderr --fpm-config /etc/php/php-fpm.conf --pid /var/run/php-fpm.pid

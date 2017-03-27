@@ -16,16 +16,27 @@ RUN apk add --update \
     imagemagick \
     jq \
     nginx \
+    openssl \
     php7 \
+    php7-curl \
+    php7-fpm \
+    php7-imap \
+    php7-json \
+    php7-mbstring \
+    php7-pdo \
+    php7-pdo_pgsql \
+    php7-pgsql \
+    php7-xml \
     postfix \
     postgresql-client \
+    supervisor \
     unzip && \
     rm -rf /var/cache/apk/*
 
-ADD https://github.com/just-containers/s6-overlay/releases/download/v1.19.1.1/s6-overlay-amd64.tar.gz /tmp/
-RUN tar xzf /tmp/s6-overlay-amd64.tar.gz -C /
-
-COPY services.d /
+RUN curl -L -s -o /etc/apk/keys/diego@hernandev.com-58b4c2e0.rsa.pub http://php.codecasts.rocks/php-alpine.pub && \
+    echo "http://php.codecasts.rocks/7.0" >> /etc/apk/repositories && \
+    apk add --update php7-imagick && \
+    rm -rf /var/cache/apk/*
 
 # deploy app and extensions
 RUN curl -L -s -o /tmp/restyaboard.zip https://github.com/RestyaPlatform/board/releases/download/${RESTYABOARD_VERSION}/board-${RESTYABOARD_VERSION}.zip && \
@@ -46,19 +57,29 @@ RUN curl -L -s -o /tmp/restyaboard.zip https://github.com/RestyaPlatform/board/r
 # configure app
 RUN addgroup -g 82 -S www-data ; \
     adduser -u 82 -D -S -G www-data www-data && \
+    sed -i "s/user nginx;/user www-data;/" /etc/nginx/nginx.conf && \
+    rm /etc/nginx/conf.d/default.conf && \
     mkdir -p ${CONF_DIR} && \
     cp ${ROOT_DIR}/restyaboard.conf ${CONF_DIR} && \
     sed -i "s/server_name.*$/server_name \"localhost\";/" ${CONF_DIR}/restyaboard.conf && \
     sed -i "s|listen 80.*$|listen 80;|" ${CONF_DIR}/restyaboard.conf && \
     sed -i "s|root.*html|root ${ROOT_DIR}|" ${CONF_DIR}/restyaboard.conf && \
+    sed -i "s|user = nobody|user = www-data|" /etc/php7/php-fpm.d/www.conf && \
+    sed -i "s|group = nobody|group = www-data|" /etc/php7/php-fpm.d/www.conf && \
+    sed -i "s|listen = 127.0.0.1:9000|listen = /run/php/php7.0-fpm.sock|" /etc/php7/php-fpm.d/www.conf && \
+    sed -i "s|;listen.owner = nobody|listen.owner = www-data|" /etc/php7/php-fpm.d/www.conf && \
+    sed -i "s|;listen.group = nobody|listen.group = www-data|" /etc/php7/php-fpm.d/www.conf && \
+    sed -i "s|;listen.mode = 0660|listen.mode = 0660|" /etc/php7/php-fpm.d/www.conf && \
+    sed -i "s|GLOB_BRACE|defined('GLOB_BRACE') ? GLOB_BRACE : 0|g" ${ROOT_DIR}/server/php/R/r.php && \
     chown -R www-data:www-data ${ROOT_DIR} && \
     chmod -R 777 ${ROOT_DIR}/media && \
     chmod -R 777 ${ROOT_DIR}/client/img && \
-    chmod -R 777 ${ROOT_DIR}/tmp
+    chmod -R 777 ${ROOT_DIR}/tmp && \
+    mkdir -p /run/nginx && \
+    mkdir -p /run/php
 
 # entrypoint
-COPY docker-entrypoint.sh /
+COPY supervisord.conf /supervisord.conf
+COPY docker-entrypoint.sh /docker-entrypoint.sh
 RUN chmod +x /docker-entrypoint.sh
-WORKDIR ${ROOT_DIR}
 ENTRYPOINT ["/docker-entrypoint.sh"]
-CMD ["start"]
