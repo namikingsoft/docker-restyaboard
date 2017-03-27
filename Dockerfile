@@ -22,6 +22,15 @@ RUN apk add --update \
     unzip && \
     rm -rf /var/cache/apk/*
 
+ADD https://github.com/just-containers/s6-overlay/releases/download/v1.19.1.1/s6-overlay-amd64.tar.gz /tmp/
+RUN tar xzf /tmp/s6-overlay-amd64.tar.gz -C / && \
+    mkdir -p /etc/services.d/nginx/finish && \
+    mkdir -p /etc/services.d/nginx/run && \
+    mkdir -p /etc/services.d/postfix/finish && \
+    mkdir -p /etc/services.d/postfix/run && \
+
+
+
 # deploy app and extensions
 RUN curl -L -s -o /tmp/restyaboard.zip https://github.com/RestyaPlatform/board/releases/download/${RESTYABOARD_VERSION}/board-${RESTYABOARD_VERSION}.zip && \
     mkdir -p  ${ROOT_DIR} && \
