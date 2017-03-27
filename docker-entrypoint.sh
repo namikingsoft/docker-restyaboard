@@ -85,6 +85,8 @@ if [ "$1" = 'start' ]; then
 
   # tail log
   exec tail -f /var/log/nginx/access.log /var/log/nginx/error.log
+
+  /init
 fi
 
 exec "$@"
