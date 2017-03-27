@@ -37,25 +37,5 @@ services:
       - restya-net
     restart: always
 
-  backup:
-    image: prodrigestivill/postgres-backup-local
-    volumes:
-      - /var/opt/restya/pgbackups:/backups
-    environment:
-      - POSTGRES_HOST=postgres
-      - POSTGRES_USER=admin
-      - POSTGRES_PASSWORD=admin
-      - POSTGRES_DB=restyaboard
-      - POSTGRES_EXTRA_OPTS=-Z9 --schema=public --blobs
-      - SCHEDULE=@every 2h
-      - BACKUP_KEEP_DAYS=2
-      - BACKUP_KEEP_WEEKS=4
-      - BACKUP_KEEP_MONTHS=6
-    depends_on:
-      - postgres
-    networks:
-      - restya-net
-    restart: always
-
 networks:
   restya-net:

@@ -63,8 +63,6 @@ Edit docker-compose.yml and modify the environment variables to suit your needs.
 There are default values for the SMTP configuration,
 so you can delete those SMTP_* variables if you don't need this feature.
 
-Also, you can choose to delete the local backup service (based on https://hub.docker.com/r/prodrigestivill/postgres-backup-local/).
-
 ``` bash
 docker-compose up -d
 ```
