@@ -20,12 +20,10 @@ services:
       - SMTP_PORT=465
     depends_on:
       - postgres
-    networks:
-      - restya-net
     restart: always
 
   postgres:
-    image: postgres:9.6
+    image: kiasaki/alpine-postgres:9.6
     ports:
       - 5432:5432
     environment:
@@ -33,9 +31,4 @@ services:
       - POSTGRES_USER=admin
       - POSTGRES_PASSWORD=admin
       - POSTGRES_DB=restyaboard
-    networks:
-      - restya-net
     restart: always
-
-networks:
-  restya-net:
