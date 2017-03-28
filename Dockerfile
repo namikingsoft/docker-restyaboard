@@ -52,7 +52,8 @@ RUN curl -L -s -o /tmp/restyaboard.zip https://github.com/RestyaPlatform/board/r
         file /tmp/$fid.zip | grep Zip && unzip /tmp/$fid.zip -d "${ROOT_DIR}/client/apps"; \
         rm /tmp/$fid.zip; \
     done && \
-    rm /tmp/apps.json
+    rm /tmp/apps.json && \
+    apk del file jq
 
 # configure app
 RUN addgroup -g 82 -S www-data ; \
@@ -75,6 +76,7 @@ RUN addgroup -g 82 -S www-data ; \
     chmod -R 777 ${ROOT_DIR}/media && \
     chmod -R 777 ${ROOT_DIR}/client/img && \
     chmod -R 777 ${ROOT_DIR}/tmp && \
+    chown -R www-data:www-data /var/lib/nginx && \
     mkdir -p /run/nginx && \
     mkdir -p /run/php
 
