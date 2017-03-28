@@ -65,21 +65,11 @@ fi
 set -e
 
 # cron shell
-cp ${ROOT_DIR}/server/php/shell/instant_email_notification.sh ${ROOT_DIR}/server/php/shell/instant_email_notification
-cp ${ROOT_DIR}/server/php/shell/periodic_email_notification.sh ${ROOT_DIR}/server/php/shell/periodic_email_notification
-cp ${ROOT_DIR}/server/php/shell/imap.sh ${ROOT_DIR}/server/php/shell/imap
-cp ${ROOT_DIR}/server/php/shell/webhook.sh ${ROOT_DIR}/server/php/shell/webhook
-cp ${ROOT_DIR}/server/php/shell/card_due_notification.sh ${ROOT_DIR}/server/php/shell/card_due_notification
-sed -i "s#bin/bash#bin/sh#" ${ROOT_DIR}/server/php/shell/instant_email_notification
-sed -i "s#bin/bash#bin/sh#" ${ROOT_DIR}/server/php/shell/periodic_email_notification
-sed -i "s#bin/bash#bin/sh#" ${ROOT_DIR}/server/php/shell/imap
-sed -i "s#bin/bash#bin/sh#" ${ROOT_DIR}/server/php/shell/webhook
-sed -i "s#bin/bash#bin/sh#" ${ROOT_DIR}/server/php/shell/card_due_notification
-echo "*/5 * * * * ${ROOT_DIR}/server/php/shell/instant_email_notification" >> /var/spool/cron/crontabs/root
-echo "0 * * * * ${ROOT_DIR}/server/php/shell/periodic_email_notification" >> /var/spool/cron/crontabs/root
-echo "*/30 * * * * ${ROOT_DIR}/server/php/shell/imap" >> /var/spool/cron/crontabs/root
-echo "*/5 * * * * ${ROOT_DIR}/server/php/shell/webhook" >> /var/spool/cron/crontabs/root
-echo "*/5 * * * * ${ROOT_DIR}/server/php/shell/card_due_notification" >> /var/spool/cron/crontabs/root
+echo "*/5 * * * * ${ROOT_DIR}/server/php/shell/instant_email_notification.sh" >> /var/spool/cron/crontabs/root
+echo "0 * * * * ${ROOT_DIR}/server/php/shell/periodic_email_notification.sh" >> /var/spool/cron/crontabs/root
+echo "*/30 * * * * ${ROOT_DIR}/server/php/shell/imap.sh" >> /var/spool/cron/crontabs/root
+echo "*/5 * * * * ${ROOT_DIR}/server/php/shell/webhook.sh" >> /var/spool/cron/crontabs/root
+echo "*/5 * * * * ${ROOT_DIR}/server/php/shell/card_due_notification.sh" >> /var/spool/cron/crontabs/root
 
 # service start
 crond

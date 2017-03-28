@@ -76,6 +76,9 @@ RUN addgroup -g 82 -S www-data ; \
     chmod -R 777 ${ROOT_DIR}/media && \
     chmod -R 777 ${ROOT_DIR}/client/img && \
     chmod -R 777 ${ROOT_DIR}/tmp && \
+    chmod +x ${ROOT_DIR}/server/php/shell/*.sh && \
+    sed -i "s|bin/bash|bin/sh|" ${ROOT_DIR}/server/php/shell/*.sh && \
+    sed -i "s|php |php7 |g" ${ROOT_DIR}/server/php/shell/*.sh && \
     chown -R www-data:www-data /var/lib/nginx && \
     mkdir -p /run/nginx && \
     mkdir -p /run/php
