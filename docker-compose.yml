@@ -23,7 +23,7 @@ services:
     restart: always
 
   postgres:
-    image: kiasaki/alpine-postgres:9.6
+    image: kiasaki/alpine-postgres
     ports:
       - 5432:5432
     environment:
