@@ -33,7 +33,7 @@ sed -i "$ a myhostname = localhost" /etc/postfix/main.cf
 sed -i '$ a myorigin = $mydomain' /etc/postfix/main.cf
 sed -i '$ a mydestination = localhost, $myhostname, localhost.$mydomain' /etc/postfix/main.cf
 sed -i '$ a sender_canonical_maps = hash:/etc/postfix/sender_canonical' /etc/postfix/main.cf
-sed -i "s/relayhost =.*$/relayhost = [${SMTP_SERVER}]:${SMTP_PORT}/" /etc/postfix/main.cf
+sed -i "s/#relayhost =.*$/relayhost = [${SMTP_SERVER}]:${SMTP_PORT}/" /etc/postfix/main.cf
 sed -i '/smtp_.*/d' /etc/postfix/main.cf
 sed -i '$ a smtpd_tls_session_cache_database = btree:${data_directory}/smtpd_scache' /etc/postfix/main.cf
 sed -i '$ a smtp_sasl_auth_enable = yes' /etc/postfix/main.cf
