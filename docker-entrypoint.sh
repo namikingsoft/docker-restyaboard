@@ -2,16 +2,14 @@
 set -e
 
 # config
-sed -i "s/^.*'R_DB_HOST'.*$/define('R_DB_HOST', '${POSTGRES_HOST}');/g" \
-  ${ROOT_DIR}/server/php/config.inc.php
-sed -i "s/^.*'R_DB_PORT'.*$/define('R_DB_PORT', '5432');/g" \
-  ${ROOT_DIR}/server/php/config.inc.php
-sed -i "s/^.*'R_DB_USER'.*$/define('R_DB_USER', '${POSTGRES_USER}');/g" \
-  ${ROOT_DIR}/server/php/config.inc.php
-sed -i "s/^.*'R_DB_PASSWORD'.*$/define('R_DB_PASSWORD', '${POSTGRES_PASSWORD}');/g" \
-  ${ROOT_DIR}/server/php/config.inc.php
-sed -i "s/^.*'R_DB_NAME'.*$/define('R_DB_NAME', '${POSTGRES_DB}');/g" \
-  ${ROOT_DIR}/server/php/config.inc.php
+sed -i \
+    -e "s/^.*'R_DB_HOST'.*$/define('R_DB_HOST', '${POSTGRES_HOST}');/g" \
+    -e "s/^.*'R_DB_PORT'.*$/define('R_DB_PORT', '5432');/g" \
+    -e "s/^.*'R_DB_USER'.*$/define('R_DB_USER', '${POSTGRES_USER}');/g" \
+    -e "s/^.*'R_DB_PASSWORD'.*$/define('R_DB_PASSWORD', '${POSTGRES_PASSWORD}');/g" \
+    -e "s/^.*'R_DB_NAME'.*$/define('R_DB_NAME', '${POSTGRES_DB}');/g" \
+    ${ROOT_DIR}/server/php/config.inc.php
+sed -i "$ a date.timezone = $(cat /etc/timezone)" /etc/php7/php.ini
 
 # postfix
 postconf -e smtputf8_enable=no
@@ -24,25 +22,27 @@ echo "[${SMTP_SERVER}]:${SMTP_PORT} ${SMTP_USERNAME}:${SMTP_PASSWORD}" > /etc/po
 postmap /etc/postfix/sasl_passwd
 echo "www-data@${SMTP_DOMAIN} ${SMTP_USERNAME}" > /etc/postfix/sender_canonical
 postmap /etc/postfix/sender_canonical
-sed -i '/mydomain.*/d' /etc/postfix/main.cf
-sed -i '/myhostname.*/d' /etc/postfix/main.cf
-sed -i '/myorigin.*/d' /etc/postfix/main.cf
-sed -i '/mydestination.*/d' /etc/postfix/main.cf
-sed -i "$ a mydomain = ${SMTP_DOMAIN}" /etc/postfix/main.cf
-sed -i "$ a myhostname = localhost" /etc/postfix/main.cf
-sed -i '$ a myorigin = $mydomain' /etc/postfix/main.cf
-sed -i '$ a mydestination = localhost, $myhostname, localhost.$mydomain' /etc/postfix/main.cf
-sed -i '$ a sender_canonical_maps = hash:/etc/postfix/sender_canonical' /etc/postfix/main.cf
-sed -i "s/#relayhost =.*$/relayhost = [${SMTP_SERVER}]:${SMTP_PORT}/" /etc/postfix/main.cf
-sed -i '/smtp_.*/d' /etc/postfix/main.cf
-sed -i '$ a smtpd_tls_session_cache_database = btree:${data_directory}/smtpd_scache' /etc/postfix/main.cf
-sed -i '$ a smtp_sasl_auth_enable = yes' /etc/postfix/main.cf
-sed -i '$ a smtp_sasl_security_options = noanonymous' /etc/postfix/main.cf
-sed -i '$ a smtp_sasl_password_maps = hash:/etc/postfix/sasl_passwd' /etc/postfix/main.cf
-sed -i '$ a smtp_use_tls = yes' /etc/postfix/main.cf
-sed -i '$ a smtp_tls_CAfile = /etc/ssl/certs/ca-certificates.crt' /etc/postfix/main.cf
-sed -i '$ a smtp_tls_wrappermode = yes' /etc/postfix/main.cf
-sed -i '$ a smtp_tls_security_level = encrypt' /etc/postfix/main.cf
+sed -i \
+    -e '/mydomain.*/d' \
+    -e '/myhostname.*/d' \
+    -e '/myorigin.*/d' \
+    -e '/mydestination.*/d' \
+    -e "$ a mydomain = ${SMTP_DOMAIN}" \
+    -e "$ a myhostname = localhost" \
+    -e '$ a myorigin = $mydomain' \
+    -e '$ a mydestination = localhost, $myhostname, localhost.$mydomain' \
+    -e '$ a sender_canonical_maps = hash:/etc/postfix/sender_canonical' \
+    -e "s/#relayhost =.*$/relayhost = [${SMTP_SERVER}]:${SMTP_PORT}/" \
+    -e '/smtp_.*/d' \
+    -e '$ a smtpd_tls_session_cache_database = btree:${data_directory}/smtpd_scache' \
+    -e '$ a smtp_sasl_auth_enable = yes' \
+    -e '$ a smtp_sasl_security_options = noanonymous' \
+    -e '$ a smtp_sasl_password_maps = hash:/etc/postfix/sasl_passwd' \
+    -e '$ a smtp_use_tls = yes' \
+    -e '$ a smtp_tls_CAfile = /etc/ssl/certs/ca-certificates.crt' \
+    -e '$ a smtp_tls_wrappermode = yes' \
+    -e '$ a smtp_tls_security_level = encrypt' \
+    /etc/postfix/main.cf
 
 # init db
 export PGHOST=${POSTGRES_HOST}
@@ -71,6 +71,5 @@ echo "*/30 * * * * ${ROOT_DIR}/server/php/shell/imap.sh" >> /var/spool/cron/cron
 echo "*/5 * * * * ${ROOT_DIR}/server/php/shell/webhook.sh" >> /var/spool/cron/crontabs/root
 echo "*/5 * * * * ${ROOT_DIR}/server/php/shell/card_due_notification.sh" >> /var/spool/cron/crontabs/root
 
-# service start
-crond
+# start
 /usr/bin/supervisord -c /supervisord.conf
