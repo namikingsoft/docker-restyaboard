@@ -1,7 +1,5 @@
 version: '2'
-
 services:
-
   restyaboard:
     build: .
     ports:
@@ -18,10 +16,10 @@ services:
       - SMTP_PASSWORD=pass
       - SMTP_SERVER=server
       - SMTP_PORT=465
+      - TZ=Etc/UTC
     depends_on:
       - postgres
     restart: always
-
   postgres:
     image: kiasaki/alpine-postgres
     ports:

@@ -7,7 +7,8 @@ ENV RESTYABOARD_VERSION=v0.4.2 \
     SMTP_USERNAME=root \
     SMTP_PASSWORD=root \
     SMTP_SERVER=localhost \
-    SMTP_PORT=465
+    SMTP_PORT=465 \
+    TZ=Etc/UTC
 
 # install packages
 RUN apk add --update \
@@ -30,6 +31,7 @@ RUN apk add --update \
     postfix \
     postgresql-client \
     supervisor \
+    tzdata \
     unzip && \
     rm -rf /var/cache/apk/*
 

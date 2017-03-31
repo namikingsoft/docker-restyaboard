@@ -9,7 +9,9 @@ sed -i \
     -e "s/^.*'R_DB_PASSWORD'.*$/define('R_DB_PASSWORD', '${POSTGRES_PASSWORD}');/g" \
     -e "s/^.*'R_DB_NAME'.*$/define('R_DB_NAME', '${POSTGRES_DB}');/g" \
     ${ROOT_DIR}/server/php/config.inc.php
-sed -i "$ a date.timezone = $(cat /etc/timezone)" /etc/php7/php.ini
+echo $TZ > /etc/timezone
+cp /usr/share/zoneinfo/$TZ /etc/localtime
+sed -i "$ a date.timezone = $TZ" /etc/php7/php.ini
 
 # postfix
 postconf -e smtputf8_enable=no
