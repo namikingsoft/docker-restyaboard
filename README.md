@@ -1,33 +1,42 @@
 Docker Restyaboard
-==============================
+===================
 
-Build Restyaboard in Docker.
+Trello like kanban board. http://restya.com/board/
 
-* Restyaboard  
-  http://restya.com/board/
-
-* Docker  
-  https://www.docker.com/
-
-
-Quick Start
-------------------------------
-
-Build image and Run container using docker-compose.
-
-``` bash
-git clone https://github.com/namikingsoft/docker-restyaboard.git
-cd docker-restyaboard
-
-docker-compose up -d
+docker-compose.yml
+------------------
+```
+version: '2'
+services:
+  restyaboard:
+    image: cangeli/docker-restyaboard:0.4.2
+    ports:
+      - 1234:80
+    volumes:
+       - /var/opt/restya/media:/usr/share/nginx/html/media
+    environment:
+      - POSTGRES_HOST=postgres
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_DB=restyaboard
+    depends_on:
+      - postgres
+    restart: always
+  postgres:
+    image: postgres:9.6
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_HOST=postgres
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_DB=restyaboard
+    restart: always
 ```
 
-Please wait a few minutes to complete initialize.
 
-
-Check URL
-------------------------------
-
+Default users
+-------------
 ```
 http://(ServerIP):1234
 
@@ -39,14 +48,36 @@ Password: restya
 ```
 
 
-Change Restyaboard Version
-------------------------------
+Build from github
+-----------------
 
-Edit restyaboard/Dockerfile.  
-Available version is https://github.com/RestyaPlatform/board/releases
+Build image and Run containers using docker-compose.
+
+``` bash
+git clone https://github.com/cangeli/docker-restyaboard.git
+cd docker-restyaboard
+```
+
+Edit docker-compose.yml and modify the environment variables to suit your needs.
+
+There are default values for the SMTP configuration,
+so you can delete those SMTP_* variables if you don't need this feature.
+
+``` bash
+docker-compose up -d
+```
+
+Please wait a few minutes to complete initialize.
+
+
+Change Restyaboard Version
+--------------------------
+
+Edit Dockerfile.
+Available version on https://github.com/RestyaPlatform/board/releases
 
 ```
-ENV restyaboard_version=REPLACE_ME
+ENV RESTYABOARD_VERSION=REPLACE_ME
 ```
 
 In case of upgrade version, rebuild image and recreate container.
@@ -62,13 +93,14 @@ If you want to upgrade database, e.g.
 ```sh
 docker-compose run --rm restyaboard bash
 
-export PGHOST=$POSTGRES_PORT_5432_TCP_ADDR
-export PGPORT=$POSTGRES_PORT_5432_TCP_PORT
-export PGUSER=$POSTGRES_ENV_POSTGRES_USER
-export PGPASSWORD=$POSTGRES_ENV_POSTGRES_PASSWORD
+export PGHOST=${POSTGRES_HOST}
+export PGPORT=5432
+export PGUSER=${POSTGRES_USER}
+export PGPASSWORD=${POSTGRES_PASSWORD}
+export PGDATABASE=${POSTGRES_DB}
 ...
-psql -d restyaboard -f sql/upgrade-0.1.3-0.1.4.sql
-psql -d restyaboard -f sql/upgrade-0.1.4-0.1.5.sql
+psql -f sql/upgrade-0.4.2-0.4.3.sql
+psql -f sql/upgrade-0.4.3-0.4.4.sql
 ...
 exit
 ```

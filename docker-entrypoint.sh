@@ -1,63 +1,77 @@
-#!/bin/bash
-
+#!/bin/sh
 set -e
 
-if [ "$1" = 'start' ]; then
-  # config
-  sed -i "s/^.*'R_DB_NAME'.*$/define('R_DB_NAME', 'restyaboard');/g" \
-    /usr/share/nginx/html/server/php/config.inc.php
-  sed -i "s/^.*'R_DB_USER'.*$/define('R_DB_USER', '${POSTGRES_ENV_POSTGRES_USER}');/g" \
-    /usr/share/nginx/html/server/php/config.inc.php
-  sed -i "s/^.*'R_DB_PASSWORD'.*$/define('R_DB_PASSWORD', '${POSTGRES_ENV_POSTGRES_PASSWORD}');/g" \
-    /usr/share/nginx/html/server/php/config.inc.php
-  sed -i "s/^.*'R_DB_HOST'.*$/define('R_DB_HOST', '${POSTGRES_PORT_5432_TCP_ADDR}');/g" \
-    /usr/share/nginx/html/server/php/config.inc.php
-  sed -i "s/^.*'R_DB_PORT'.*$/define('R_DB_PORT', '${POSTGRES_PORT_5432_TCP_PORT}');/g" \
-    /usr/share/nginx/html/server/php/config.inc.php
+# config
+sed -i \
+    -e "s/^.*'R_DB_HOST'.*$/define('R_DB_HOST', '${POSTGRES_HOST}');/g" \
+    -e "s/^.*'R_DB_PORT'.*$/define('R_DB_PORT', '5432');/g" \
+    -e "s/^.*'R_DB_USER'.*$/define('R_DB_USER', '${POSTGRES_USER}');/g" \
+    -e "s/^.*'R_DB_PASSWORD'.*$/define('R_DB_PASSWORD', '${POSTGRES_PASSWORD}');/g" \
+    -e "s/^.*'R_DB_NAME'.*$/define('R_DB_NAME', '${POSTGRES_DB}');/g" \
+    ${ROOT_DIR}/server/php/config.inc.php
+echo $TZ > /etc/timezone
+cp /usr/share/zoneinfo/$TZ /etc/localtime
+sed -i "$ a date.timezone = $TZ" /etc/php7/php.ini
 
-  # cron shell
-  chmod +x /usr/share/nginx/html/server/php/shell/*.sh
-  echo '*/5 * * * * php /usr/share/nginx/htmlserver/php/shell/indexing_to_elasticsearch.sh' > /var/spool/cron/root
-  echo '*/5 * * * * php /usr/share/nginx/htmlserver/php/shell/instant_email_notification.sh' > /var/spool/cron/root
-  echo '0 * * * * php /usr/share/nginx/htmlserver/php/shell/periodic_email_notification.sh' > /var/spool/cron/root
-  echo '*/5 * * * * php /usr/share/nginx/htmlserver/php/shell/webhook.sh' > /var/spool/cron/root
-  echo '*/5 * * * * php /usr/share/nginx/htmlserver/php/shell/card_due_notification.sh' > /var/spool/cron/root
-  echo '*/5 * * * * php /usr/share/nginx/htmlserver/php/shell/imap.sh' > /var/spool/cron/root
- 
-  # media
-  cp -R /tmp/media /usr/share/nginx/html/
-  chmod -R go+w /usr/share/nginx/html/media
-  chmod -R go+w /usr/share/nginx/html/client/img
+# postfix
+postconf -e smtputf8_enable=no
+postalias /etc/postfix/aliases
+postconf -e smtpd_delay_reject=yes
+postconf -e smtpd_helo_required=yes
+postconf -e "smtpd_helo_restrictions=permit_mynetworks,reject_invalid_helo_hostname,permit"
+postconf -e "smtpd_recipient_restrictions=reject_non_fqdn_recipient,reject_unknown_recipient_domain,reject_unverified_recipient"
+echo "[${SMTP_SERVER}]:${SMTP_PORT} ${SMTP_USERNAME}:${SMTP_PASSWORD}" > /etc/postfix/sasl_passwd
+postmap /etc/postfix/sasl_passwd
+echo "www-data@${SMTP_DOMAIN} ${SMTP_USERNAME}" > /etc/postfix/sender_canonical
+postmap /etc/postfix/sender_canonical
+sed -i \
+    -e '/mydomain.*/d' \
+    -e '/myhostname.*/d' \
+    -e '/myorigin.*/d' \
+    -e '/mydestination.*/d' \
+    -e "$ a mydomain = ${SMTP_DOMAIN}" \
+    -e "$ a myhostname = localhost" \
+    -e '$ a myorigin = $mydomain' \
+    -e '$ a mydestination = localhost, $myhostname, localhost.$mydomain' \
+    -e '$ a sender_canonical_maps = hash:/etc/postfix/sender_canonical' \
+    -e "s/#relayhost =.*$/relayhost = [${SMTP_SERVER}]:${SMTP_PORT}/" \
+    -e '/smtp_.*/d' \
+    -e '$ a smtpd_tls_session_cache_database = btree:${data_directory}/smtpd_scache' \
+    -e '$ a smtp_sasl_auth_enable = yes' \
+    -e '$ a smtp_sasl_security_options = noanonymous' \
+    -e '$ a smtp_sasl_password_maps = hash:/etc/postfix/sasl_passwd' \
+    -e '$ a smtp_use_tls = yes' \
+    -e '$ a smtp_tls_CAfile = /etc/ssl/certs/ca-certificates.crt' \
+    -e '$ a smtp_tls_wrappermode = yes' \
+    -e '$ a smtp_tls_security_level = encrypt' \
+    /etc/postfix/main.cf
 
-  # init db
-  export PGHOST=$POSTGRES_PORT_5432_TCP_ADDR
-  export PGPORT=$POSTGRES_PORT_5432_TCP_PORT
-  export PGUSER=$POSTGRES_ENV_POSTGRES_USER
-  export PGPASSWORD=$POSTGRES_ENV_POSTGRES_PASSWORD
-  set +e
-  while :
-  do
-    psql -c "\q"
-    if [ "$?" = 0 ]; then
-      break
-    fi
-    sleep 1
-  done
-  psql -c "CREATE DATABASE restyaboard ENCODING 'UTF8'"
+# init db
+export PGHOST=${POSTGRES_HOST}
+export PGPORT=5432
+export PGUSER=${POSTGRES_USER}
+export PGPASSWORD=${POSTGRES_PASSWORD}
+export PGDATABASE=${POSTGRES_DB}
+set +e
+while :
+do
+  psql -c "\q"
   if [ "$?" = 0 ]; then
-    psql -d restyaboard -f /usr/share/nginx/html/sql/restyaboard_with_empty_data.sql
+    break
   fi
-  set -e
-
-  # service start
-  service cron start
-  service php5-fpm start
-  service nginx start
-  service postfix start
-
-  # tail log
-  exec tail -f /var/log/nginx/access.log /var/log/nginx/error.log
+  sleep 1
+done
+if [ "$(psql -c '\d')" = "No relations found." ]; then
+  psql -f "${ROOT_DIR}/sql/restyaboard_with_empty_data.sql"
 fi
+set -e
 
-exec "$@"
+# cron shell
+echo "*/5 * * * * ${ROOT_DIR}/server/php/shell/instant_email_notification.sh" >> /var/spool/cron/crontabs/root
+echo "0 * * * * ${ROOT_DIR}/server/php/shell/periodic_email_notification.sh" >> /var/spool/cron/crontabs/root
+echo "*/30 * * * * ${ROOT_DIR}/server/php/shell/imap.sh" >> /var/spool/cron/crontabs/root
+echo "*/5 * * * * ${ROOT_DIR}/server/php/shell/webhook.sh" >> /var/spool/cron/crontabs/root
+echo "*/5 * * * * ${ROOT_DIR}/server/php/shell/card_due_notification.sh" >> /var/spool/cron/crontabs/root
 
+# start
+/usr/bin/supervisord -c /supervisord.conf
